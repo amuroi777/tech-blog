@@ -19,7 +19,7 @@ const SignUp = () => {
             </Breadcrumb>
           </Box>
           <Heading mb={2} textAlign="center" fontSize={{ base: "3xl", md: "4xl", lg: "5xl" }}>
-            Sign In
+            Sign Up
           </Heading>
           <Box height="4px" backgroundColor="black" margin="0 auto" mt={1} width={{ base: "30px", sm: "40px", md: "50px", lg: "60px" }} />
         </Box>
@@ -37,15 +37,9 @@ const SignUp = () => {
         <Input placeholder="Enter your password" variant="filled" mb={0} rounded={13} borderColor="black.100" background="gray.200" type="password" width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }} />
         <Flex justifyContent="center">
           <Button mb={6} rounded="60px" padding="35px" mt="50px" bg={{ base: "blue.400", md: "blue.300" }} width={{ base: "60%", sm: "60%", md: "60%", lg: "40%" }} fontSize={{ base: "xl", md: "2xl", lg: "2xl" }} color={{ base: "black", sm: "white" }}>
-            Sign In
+            Sign Up
           </Button>
         </Flex>
-        <Text textAlign="center" fontWeight="bold">
-          Don't have an account ?
-          <Box as="span" color="blue.300" fontSize={{ base: "sm", sm: "md", md: "lg", lg: "xl" }}>
-            Sign Up
-          </Box>
-        </Text>
       </Flex>
     </Flex>
   );
