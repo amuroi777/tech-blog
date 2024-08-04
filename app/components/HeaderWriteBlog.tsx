@@ -17,7 +17,7 @@ const HeaderWriteBlog = () => {
                 Home
               </Link>
             </Button>
-            <Button mb={12} rounded="60px" padding="18px" mt="50px" bg="blue.400" width="60%" fontSize="md" color="#000">
+            <Button mb={12} rounded="60px" padding="18px" mt="50px" bg="blue.400" width="60%" fontSize="md" color="#ooo">
               <Link px={2} py={1} rounded="md" _hover={{ textDecoration: "none" }} href="#">
                 Publish
               </Link>
