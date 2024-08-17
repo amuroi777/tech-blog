@@ -1,17 +1,17 @@
 'use client'
 import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
-import styles from "./page.module.css";
 import React from 'react'
-import Head from "next/head";
 import Pagination from "./components/Pagination";
-
+import { usePosts } from "./hooks/UsePosts";
 
 
 export default function Home() {
 
+  const { posts, loading, error } = usePosts();
   const [currentPage, setCurrentPage] = React.useState(1);
   const limit = 6;
   const totalCount = 18;
+
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -20,7 +20,6 @@ export default function Home() {
   return (
 
     <Box mx='6'>
-
 
       <Stack mt='6' spacing='3'></Stack>
       <Box
@@ -45,324 +44,33 @@ export default function Home() {
           />
         </Center>
       </Box>
-
       <Box display='flex' alignItems='center' justifyContent="center" p={4}>
 
         <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mb={2}>この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mt={1} >この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mt={1} >この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-        </SimpleGrid>
-
-
-
-      </Box>
-
-      <Box display='flex' alignItems='center' justifyContent="center" p={4}>
-
-        <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mb={2}>この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mt={1} >この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mt={1} >この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-        </SimpleGrid>
-
-      </Box>
-
-      <Box display='flex' alignItems='center' justifyContent="center" p={4}>
-
-        <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mb={2}>この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mt={1} >この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-
-
-              </Box>
-
-            </CardBody>
-
-          </Card>
-
-          <Card border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
-            <CardBody p="0" borderTopRadius="md" maxH="inherit">
-              <Image
-                borderTopRadius="md"
-                objectFit='cover'
-                src="https://placehold.jp/467x304.png"
-                alt="dummy"
-                maxH="inherit"
-              />
-              <Box>
-                <Stack mx='5' spacing='2' my='4'>
-                  <Text mt={1} color="gray.500" textAlign="right">Categroy</Text>
-
-                  <Heading size='md'>Post Title</Heading>
-
-                  <Box display='flex' alignItems='center' >
-
-                    <Text mt={1} color="gray.500">Author</Text>
-                    <Text mt={1} color="gray.500" marginLeft='5'>a min ago</Text>
-                  </Box>
-
-                  <Text fontSize={["sm", "md", "lg", "xl"]} mt={1} >この文章はダミーです。文字の大きさ、量、字間、行間等を確認するために入れています。</Text>
-
-                </Stack>
-              </Box>
-            </CardBody>
-          </Card>
+          {posts.map((post) => (
+            <Card key={post.id} border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
+              <CardBody p="0" borderTopRadius="md" maxH="inherit">
+                <Image
+                  borderTopRadius="md"
+                  objectFit='cover'
+                  src={post.image_path}
+                  alt={post.title}
+                  maxH="inherit"
+                />
+                <Box>
+                  <Stack mx='5' spacing='2' my='4'>
+                    <Text mt={1} color="gray.500" textAlign="right"> {post.category_id}</Text>
+                    <Heading size='md'>{post.title}</Heading>
+                    <Box display='flex' alignItems='center' >
+                      <Text mt={1} color="gray.500">{post.user_id}</Text>
+                      <Text mt={1} color="gray.500" marginLeft='5'>  {new Date(post.created_at).toLocaleDateString()}</Text>
+                    </Box>
+                    <Text fontSize={["sm", "md", "lg", "xl"]} mb={2}>{post.content}</Text>
+                  </Stack>
+                </Box>
+              </CardBody>
+            </Card>
+          ))}
         </SimpleGrid>
       </Box>
 
@@ -376,12 +84,7 @@ export default function Home() {
         />
       </Box>
 
-
-
     </Box>
-
-
-
 
   );
 }
