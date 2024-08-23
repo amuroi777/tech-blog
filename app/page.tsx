@@ -1,21 +1,40 @@
-'use client'
+'use client';
+
 import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
-import React from 'react'
 import Pagination from "./components/Pagination";
 import { usePosts } from "./hooks/UsePosts";
+import React, { useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 
 export default function Home() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const { posts, loading } = usePosts();
+  const itemPerPage = 9;
 
-  const { posts, loading, error } = usePosts();
-  const [currentPage, setCurrentPage] = React.useState(1);
-  const limit = 6;
-  const totalCount = 18;
 
+  //現在のページ番号を管理するステート
+  const [currentPage, setCurrentPage] = React.useState<number>(1);
+  useEffect(() => {
+    const page = parseInt(searchParams.get('p') || '1', 10);
+    setCurrentPage(page);
+  }, [searchParams]);
 
   const handlePageChange = (page: number) => {
+    router.push(`?p=${page}`);
     setCurrentPage(page);
   };
+
+  if (loading) {
+    return <Center><Box mt='20' color="gray.500">Loading...</Box></Center>;
+  }
+
+  //  現在のページに基づいて表示するカードを制限
+  const startIndex = (currentPage - 1) * itemPerPage;
+  const endIndex = startIndex + itemPerPage;
+  const displayedPosts = posts.slice(startIndex, endIndex);
+
 
   return (
 
@@ -47,7 +66,7 @@ export default function Home() {
       <Box display='flex' alignItems='center' justifyContent="center" p={4}>
 
         <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
-          {posts.map((post) => (
+          {displayedPosts.map((post) => (
             <Card key={post.id} border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
               <CardBody p="0" borderTopRadius="md" maxH="inherit">
                 <Image
@@ -75,13 +94,14 @@ export default function Home() {
       </Box>
 
       <Box display='flex' alignItems='center' justifyContent="center" p={4}>
+
         <Pagination
           currentPage={currentPage}
-          limit={limit}
-          count={totalCount}
-          path="/page" // ページリンクのパス未設定（仮）で詳細ページに
-          onPageChange={handlePageChange} // ページ変更のハンドラを渡す
-        />
+          limit={itemPerPage}
+          count={posts.length}
+          onPageChange={handlePageChange}
+          path={""} /> {/*現在のパスを渡す ? サーバー・・・サイド？*/}
+
       </Box>
 
     </Box>
