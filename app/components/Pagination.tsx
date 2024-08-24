@@ -12,11 +12,13 @@ type Props = {
 };
 
 export default function Pagination({ currentPage, limit, count, path, onPageChange }: Props) {
+
   const totalPages = Math.ceil(count / limit);
 
   // 表示するページ数を最大10ページに設定
   const maxPageNumbersToShow = 10;
   let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbersToShow / 2));
+
   let endPage = startPage + maxPageNumbersToShow - 1;
 
   // ページ番号の範囲が最大10ページになるように調整

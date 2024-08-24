@@ -1,4 +1,10 @@
-'use client';
+'use client'
+
+import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import styles from "./page.module.css";
+import React from 'react'
+import Head from "next/head";
+import Pagination from "./components/Pagination";
 
 import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 import Pagination from "./components/Pagination";
@@ -34,7 +40,6 @@ export default function Home() {
   const startIndex = (currentPage - 1) * itemPerPage;
   const endIndex = startIndex + itemPerPage;
   const displayedPosts = posts.slice(startIndex, endIndex);
-
 
   return (
 
@@ -103,6 +108,8 @@ export default function Home() {
           path={""} /> {/*現在のパスを渡す ? サーバー・・・サイド？*/}
 
       </Box>
+
+
 
     </Box>
 
