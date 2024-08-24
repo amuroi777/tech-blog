@@ -1,17 +1,10 @@
-'use client'
-
-import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
-import styles from "./page.module.css";
-import React from 'react'
-import Head from "next/head";
-import Pagination from "./components/Pagination";
+'use client';
 
 import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 import Pagination from "./components/Pagination";
 import { usePosts } from "./hooks/UsePosts";
 import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-
 
 export default function Home() {
   const searchParams = useSearchParams();
