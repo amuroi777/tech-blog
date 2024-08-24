@@ -2,14 +2,26 @@
 import { Box, Card, CardBody, Center, Heading, Image, Input, SimpleGrid, Stack, Text } from "@chakra-ui/react";
 import styles from "./page.module.css";
 import React from 'react'
+import Head from "next/head";
+import Pagination from "./components/Pagination";
 
 
 
 export default function Home() {
+
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const limit = 6;
+  const totalCount = 18;
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
   return (
 
-
     <Box mx='6'>
+
+
       <Stack mt='6' spacing='3'></Stack>
       <Box
         as="div"
@@ -352,11 +364,25 @@ export default function Home() {
             </CardBody>
           </Card>
         </SimpleGrid>
-
       </Box>
+
+      <Box display='flex' alignItems='center' justifyContent="center" p={4}>
+        <Pagination
+          currentPage={currentPage}
+          limit={limit}
+          count={totalCount}
+          path="/page" // ページリンクのパス未設定（仮）で詳細ページに
+          onPageChange={handlePageChange} // ページ変更のハンドラを渡す
+        />
+      </Box>
+
+
 
     </Box>
 
 
+
+
   );
 }
+
