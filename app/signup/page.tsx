@@ -3,10 +3,13 @@
 import { Box, Text, Flex, Heading, Button, Input, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Icon, Alert, AlertIcon } from "@chakra-ui/react";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { useState } from 'react';
-import { auth } from '../../firebase';
+import { auth, db } from '../../firebase';
+import { setDoc, doc } from 'firebase/firestore';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { updateProfile } from "firebase/auth";
 import {useRouter} from 'next/navigation'
+import { serverTimestamp } from 'firebase/firestore';
+
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -22,8 +25,7 @@ const SignUp = () => {
     const hasSpecialChar =/[!@#$%^&*(),.?":{}|<>]/.test(password);
     return hasMinLength && hasNumber && hasSpecialChar;
   }
-
-
+  
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -56,12 +58,20 @@ const SignUp = () => {
         displayName: nameValue,
       })
 
+      // Firestore にユーザードキュメントを作成
+      await setDoc(doc(db, "users", userCredential.user.uid), {
+        uid: userCredential.user.uid,
+        name: nameValue,
+        email: emailValue,
+        createdAt: serverTimestamp(),
+      });
+
       console.log("会員登録が成功しました:", userCredential.user);
       setIsSignUpMessage(true);
       setError(null);
       router.push('./signin');//登録が成功するとログインページへ遷移
     } catch (error) {
-      console.log("Error creating user:", error);
+      console.log("会員登録に失敗しました:", error);
       setError("会員登録に失敗しました");
       setIsSignUpMessage(false);
     }
