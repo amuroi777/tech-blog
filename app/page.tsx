@@ -5,8 +5,13 @@ import Pagination from "./components/Pagination";
 import { usePosts } from "./hooks/UsePosts";
 import React, { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import HeaderTop from "./components/HeaderTop";
+import { AuthProvider } from './context/AuthContext';
+import type { AppProps } from 'next/app'
 
-export default function Home() {
+
+
+export default function Home({Component, pageProps}: AppProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
   const { posts, loading } = usePosts();
@@ -35,7 +40,10 @@ export default function Home() {
   const displayedPosts = posts.slice(startIndex, endIndex);
 
   return (
+<AuthProvider>
+    <HeaderTop />
 
+    
     <Box mx='6'>
 
       <Stack mt='6' spacing='3'></Stack>
@@ -105,7 +113,7 @@ export default function Home() {
 
 
     </Box>
-
+    </AuthProvider>
   );
 }
 
