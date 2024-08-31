@@ -24,8 +24,9 @@ export const AuthGuard = ({ children }: Props) => {
         isClosable: true,
       });
       router.push('/signin')
-    }else if (user){
+    }else if (user && !toast.isActive('login-toast')){
       toast({
+        id: 'login-toast',
         title: 'ログインしました',
         status: 'success',
         duration: 5000,
