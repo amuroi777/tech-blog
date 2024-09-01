@@ -1,6 +1,6 @@
 'use client'
 import { useEffect, useState } from "react";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { db, storage } from "@/firebase";
 import { Box, Button, Center, Flex, Input, Select, Stack, Text, Textarea } from "@chakra-ui/react";
 import Dropzone from "react-dropzone";
@@ -10,6 +10,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { Editor as DraftEditor, EditorState, RichUtils, Modifier, convertToRaw } from "draft-js";
 import 'draft-js/dist/Draft.css';
 import HeaderWriteBlog from "../components/HeaderWriteBlog";
+import { getAuth } from "firebase/auth";
+import { useRouter } from "next/navigation";
 
 type FormTypes = {
   id: string;
@@ -30,6 +32,8 @@ const AddPage = () => {
   );
   const [categories, setCategories] = useState<{ id: string, name: string }[]>([]);
   const [isCategorySelected, setIsCategorySelected] = useState(true);
+  const auth = getAuth();
+  const router = useRouter();
 
   useEffect(() => {
     setEditorEnable(true);
@@ -54,6 +58,7 @@ const AddPage = () => {
     setValue,
     watch,
     formState: { errors },
+    reset,
   } = useForm<FormTypes>();
 
   // 新しいカテゴリーが入力されたら、Selectを無効化
@@ -96,26 +101,40 @@ const AddPage = () => {
       // カテゴリーが新規入力された場合、Firestoreに追加
       let category_id = data.category_id;
       if (data.category) {
-        const categoryDoc = await addDoc(collection(db, "categories"), {
+        // setDocを使って指定したIDでドキュメントを作成
+        await setDoc(doc(db, "categories", id), {
           id: id,
           name: data.category,
           created_at: toJapanTimeISO(),
           updated_at: toJapanTimeISO(),
         });
-        category_id = categoryDoc.id; // 新しいカテゴリーのIDを取得
+        category_id = id; // 新しいカテゴリーのIDとして使用
+      }
+
+      const user = auth.currentUser; // 現在のユーザーを取得
+      if (!user) {
+        throw new Error("User is not logged in");
       }
 
       // ブログ投稿データの保存
-      await addDoc(collection(db, "posts"), {
+      await setDoc(doc(db, "posts", id), {
         id: id,
-        user_id: "0", // 仮ID
-        category_id: category_id,
+        user_id: user.uid, // 現在のユーザーのuidを使用
+        category_id: category_id, // カテゴリーIDをセット
         title: data.title,
         content: contentRaw, // コンテンツを文字列として保存
         image_path: downloadURL,
         created_at: toJapanTimeISO(),
         updated_at: toJapanTimeISO(),
       });
+
+      // フォームをリセット
+      reset();
+      setSelectedImage(null);
+      setEditorState(EditorState.createEmpty());
+
+      // トップページに遷移
+      router.push('/');
     } catch (error) {
       console.error("Error writing document: ", error);
     } finally {
