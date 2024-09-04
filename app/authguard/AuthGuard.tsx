@@ -16,6 +16,8 @@ export const AuthGuard = ({ children }: Props) => {
 
 
   useEffect(() => {
+    console.log('AuthGuard user:', user); // ユーザー情報を確認
+
     if (user === null) {
       toast({
         title:'ログアウトしました',
@@ -33,7 +35,7 @@ export const AuthGuard = ({ children }: Props) => {
         isClosable: true,
       })
     }
-  }, [user, router])
+  }, [user, router, toast])
 
   if(typeof user === 'undefined') {
     return <Box>Loading...</Box>

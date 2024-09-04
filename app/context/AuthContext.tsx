@@ -2,42 +2,43 @@
 
 import {createContext, ReactNode, useContext, useEffect, useState,} from 'react'
 import {User, getAuth, onAuthStateChanged } from 'firebase/auth'
+import { auth } from '@/firebase'; 
 
 export type GlobalAuthState = {
   user: User | null | undefined
 }
 
-const initialState: GlobalAuthState = {
-  user: undefined,
-}
+const AuthContext = createContext<GlobalAuthState>({user: undefined})
 
-const AuthContext = createContext<GlobalAuthState>(initialState)
+// const initialState: GlobalAuthState = {
+//   user: undefined,
+// }
 
 type Props = {children: ReactNode}
 
 export const AuthProvider = ({children}: Props) =>{
-  const [user, setUser] = useState<GlobalAuthState>(initialState)
+  const [user, setUser] = useState<User | null | undefined>(undefined)
 
   useEffect(() => {
-    try {
-      const auth = getAuth()
-      return onAuthStateChanged(auth, (user) => {
-        setUser({
-          user,
-        })
-      })
-  }catch (error) {
-    setUser(initialState)
-    throw error
-  }
-},[])
+    const auth = getAuth()
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      console.log('onAuthStateChanged:', user)
+      setUser(user)
+    })
+
+    return () => unsubscribe()
+  }, [])
 
 return(
-<AuthContext.Provider value={user}>
+<AuthContext.Provider value={{user}}>
   {children}
   </AuthContext.Provider>
 )
   
 }
 
-export const useAuthContext = () => useContext(AuthContext)
+export const useAuthContext = () => {
+ const context = useContext(AuthContext);
+
+ return context;
+ }
