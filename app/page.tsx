@@ -55,7 +55,12 @@ export default function Home() {
   // 表示する投稿の範囲を決定
   const startIndex = (currentPage - 1) * itemPerPage;
   const endIndex = startIndex + itemPerPage;
-  const displayedPosts = filteredPosts.slice(startIndex, endIndex);
+  const displayedPosts = posts.slice(startIndex, endIndex);
+
+  const handleCardClick = (postId: string) => {
+    router.push(`/${postId}`)
+  }
+
 
   return (
     <AuthProvider>
@@ -94,7 +99,17 @@ export default function Home() {
           <Box display='flex' alignItems='center' justifyContent="center" p={4}>
             <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
               {displayedPosts.map((post) => (
-                <Card key={post.id} border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
+                <Card
+                  key={post.id}
+                  border="1"
+                  borderRadius="md"
+                  maxW="467px"
+                  maxH="498px"
+                  mx="3"
+                  my="5"
+                  onClick={() => handleCardClick(post.id)}
+                  cursor="pointer"
+                  >
                   <Link href={`/${post.id}`}>
                     <CardBody p="0" borderTopRadius="md" maxH="inherit">
                       <Image
