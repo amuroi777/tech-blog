@@ -15,8 +15,12 @@ export default function Pagination({ currentPage, limit, count, path, onPageChan
 
   const totalPages = Math.ceil(count / limit);
 
+  if (totalPages <= 1) {
+    return null;
+  }
+
   // 表示するページ数を最大10ページに設定
-  const maxPageNumbersToShow = 10;
+  const maxPageNumbersToShow = Math.min(10, totalPages);
   let startPage = Math.max(1, currentPage - Math.floor(maxPageNumbersToShow / 2));
 
   let endPage = startPage + maxPageNumbersToShow - 1;
@@ -35,8 +39,6 @@ export default function Pagination({ currentPage, limit, count, path, onPageChan
     pageNumbers.push(i);
   }
 
-  const showPageNumbers = useBreakpointValue({ base: false, md: true });
-  // モバイル時は非表示にし、デスクトップ時は表示
 
   const handlePageChange = (page: number) => {
     onPageChange(page); // ページ変更のコールバックを呼びだし
@@ -62,7 +64,7 @@ export default function Pagination({ currentPage, limit, count, path, onPageChan
         </Link>
       )}
 
-      {showPageNumbers &&
+      {pageNumbers &&
         pageNumbers.map((number) => (
           <Link key={number} href={`${path}?p=${number}`}>
             <Button
