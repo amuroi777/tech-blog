@@ -39,6 +39,11 @@ export default function Home({ Component, pageProps }: AppProps) {
   const endIndex = startIndex + itemPerPage;
   const displayedPosts = posts.slice(startIndex, endIndex);
 
+  const handleCardClick = (postId: string) => {
+    router.push(`/${postId}`)
+  }
+
+
   return (
     <AuthProvider>
       <AuthGuard>
@@ -74,7 +79,17 @@ export default function Home({ Component, pageProps }: AppProps) {
 
             <SimpleGrid columns={[1, 1, 2, 3]} spacing={3}>
               {displayedPosts.map((post) => (
-                <Card key={post.id} border="1" borderRadius="md" maxW="467px" maxH="498px" mx="3" my="5">
+                <Card
+                  key={post.id}
+                  border="1"
+                  borderRadius="md"
+                  maxW="467px"
+                  maxH="498px"
+                  mx="3"
+                  my="5"
+                  onClick={() => handleCardClick(post.id)}
+                  cursor="pointer"
+                  >
                   <CardBody p="0" borderTopRadius="md" maxH="inherit">
                     <Image
                       borderTopRadius="md"

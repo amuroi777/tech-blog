@@ -25,15 +25,21 @@ export const AuthGuard = ({ children }: Props) => {
         duration: 5000,
         isClosable: true,
       });
+      //ログアウト時にsessionStrageの中身をクリアにする
+      sessionStorage.removeItem('login-toast');
       router.push('/signin')
-    }else if (user && !toast.isActive('login-toast')){
-      toast({
-        id: 'login-toast',
-        title: 'ログインしました',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      })
+    }
+    if (user && !sessionStorage.getItem('login-toast')){
+      if(!toast.isActive('login-toast')) {
+        toast({
+          id: 'login-toast',
+          title: 'ログインしました',
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+        sessionStorage.setItem('login-toast', 'true')
+      }
     }
   }, [user, router, toast])
 
