@@ -58,7 +58,7 @@ export default function Home() {
   // 表示する投稿の範囲を決定
   const startIndex = (currentPage - 1) * itemPerPage;
   const endIndex = startIndex + itemPerPage;
-  const displayedPosts = posts.slice(startIndex, endIndex);
+  const displayedPosts = filteredPosts.slice(startIndex, endIndex);
 
   const handleCardClick = (postId: string) => {
     router.push(`/${postId}`)
