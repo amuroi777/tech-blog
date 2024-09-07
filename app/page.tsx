@@ -24,6 +24,9 @@ export default function Home() {
   // 検索用の状態
   const [searchTerm, setSearchTerm] = useState<string>("");
 
+  // 画像エラーの場合
+  const [imageError, setImageError] = useState<string>("");
+
   useEffect(() => {
     const page = parseInt(searchParams.get('p') || '1', 10);
     setCurrentPage(page);
@@ -109,23 +112,41 @@ export default function Home() {
                   my="5"
                   onClick={() => handleCardClick(post.id)}
                   cursor="pointer"
-                  >
+                >
                   <Link href={`/${post.id}`}>
-                    <CardBody p="0" borderTopRadius="md" maxH="inherit">
+                    <CardBody p="0" borderTopRadius="md" height="498px" maxH="inherit">
                       <Image
                         borderTopRadius="md"
                         objectFit='cover'
                         src={post.image_path}
                         alt={post.title}
-                        maxH="inherit"
+                        width="100%"
+                        maxHeight="62%"
+                        onError={() => setImageError(post.id)}
+                        display={imageError === post.id ? "none" : "block"}
+
+
                       />
+                      {imageError === post.id && (
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          justifyContent="center"
+                          height="62%"
+                          width="100%"
+                          bg="gray.200"
+                          borderTopRadius="md"
+                        >
+                          <Text color="gray.500" fontSize="lg">No Image</Text>
+                        </Box>
+                      )}
                       <Box>
                         <Stack px='5' spacing='2' py='4'>
                           <Text mt={1} color="gray.500" textAlign="right">{post.categoryName}</Text>
                           <Heading size='md'>{post.title}</Heading>
                           <Box display='flex' alignItems='center' >
-                            <Text mt={1} color="gray.500">{post.userName}</Text>
-                            <Text mt={1} color="gray.500" marginLeft='5'>{new Date(post.created_at).toLocaleDateString()}</Text>
+                            <Text mt={1} color="blue.400">{post.userName}</Text>
+                            <Text mt={1} color="blue.400" marginLeft='5'>{new Date(post.created_at).toLocaleDateString()}</Text>
                           </Box>
                           <Box
                             fontSize={["sm", "md", "lg", "xl"]}
