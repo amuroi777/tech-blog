@@ -9,9 +9,10 @@ import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import { Editor as DraftEditor, EditorState, RichUtils, Modifier, convertToRaw } from "draft-js";
 import 'draft-js/dist/Draft.css';
-import HeaderWriteBlog from "../components/HeaderWriteBlog";
 import { getAuth } from "firebase/auth";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import HeaderTop from "../components/HeaderTop";
+import { AuthProvider } from "../context/AuthContext";
 
 type FormTypes = {
   id: string;
@@ -34,6 +35,8 @@ const AddPage = () => {
   const [isCategorySelected, setIsCategorySelected] = useState(true);
   const auth = getAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
 
   useEffect(() => {
     setEditorEnable(true);
@@ -142,6 +145,16 @@ const AddPage = () => {
     }
   }
 
+  //headerの「publish」クリック時の処理
+  useEffect(() => {
+    // クエリパラメータの処理
+    const publish = searchParams.get('publish');
+    if (publish === 'true') {
+      // フォームを自動的に送信
+      handleSubmit(onSubmit)();
+    }
+  }, [searchParams]);
+
   // エディター 太字
   const handleBold = () => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, "BOLD"));
@@ -204,7 +217,8 @@ const AddPage = () => {
 
   return (
     <>
-      <HeaderWriteBlog />
+    <AuthProvider>
+      <HeaderTop />
       <Box pt={10} pb={20}>
         <Center fontWeight="bold" fontSize="4xl" mb={5}>Create Blog</Center>
         <Flex justify="center" gap={10} px={{ base: 5, md: 10 }}>
@@ -311,6 +325,7 @@ const AddPage = () => {
           </Box>
         </Flex>
       </Box >
+    </AuthProvider>
     </>
   )
 }
