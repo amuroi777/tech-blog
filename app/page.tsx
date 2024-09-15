@@ -67,7 +67,6 @@ export default function Home() {
 
   return (
     <AuthProvider>
-      <AuthGuard>
         <HeaderTop />
 
         <Box mx='6'>
@@ -178,7 +177,6 @@ export default function Home() {
             />
           </Box>
         </Box>
-      </AuthGuard>
     </AuthProvider>
   );
 }
