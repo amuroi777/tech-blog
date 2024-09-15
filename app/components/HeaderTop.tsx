@@ -4,7 +4,6 @@ import {getAuth, signOut} from "firebase/auth";
 import { AuthProvider, useAuthContext } from "../context/AuthContext";
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
-import { AuthGuard } from "../authguard/AuthGuard";
 
 const HeaderTop = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -53,7 +52,7 @@ const HeaderTop = () => {
   }
 
   return (
-    <AuthGuard>
+    <AuthProvider>
       <Box bg="gray.300" px={4}>
         <Flex h={20} alignItems="center" pl="20px" justifyContent="space-between">
           <Box fontSize="4xl" fontWeight="bold" color="blackAlpha.400" onClick={() => router.push('/')} cursor="pointer">
@@ -268,7 +267,7 @@ const HeaderTop = () => {
           </DrawerOverlay>
         </Drawer>
       </Box>
-    </AuthGuard>
+    </AuthProvider>
   );
 };
 

@@ -13,6 +13,7 @@ import { getAuth } from "firebase/auth";
 import { useRouter, useSearchParams } from "next/navigation";
 import HeaderTop from "../components/HeaderTop";
 import { AuthProvider } from "../context/AuthContext";
+import { AuthGuard } from "../authguard/AuthGuard";
 
 type FormTypes = {
   id: string;
@@ -216,117 +217,117 @@ const AddPage = () => {
   };
 
   return (
-    <>
     <AuthProvider>
-      <HeaderTop />
-      <Box pt={10} pb={20}>
-        <Center fontWeight="bold" fontSize="4xl" mb={5}>Create Blog</Center>
-        <Flex justify="center" gap={10} px={{ base: 5, md: 10 }}>
-          <Stack
-            bg='gray.100'
-            rounded="md"
-            py={{ base: 4, md: 8 }}
-            px={5}
-            spacing={6}
-            h="fit-content"
-            w={{ base: "100%", md: "fit-content" }}
-            position={{ base: "fixed", md: "sticky" }}
-            top={{ base: "auto", md: 30 }}
-            bottom={{ base: 0, md: "auto" }}
-            direction={{ base: "row", md: "column" }}
-            justify="center"
-            lineHeight={1}
-          >
-            <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" fontWeight="bold" onClick={handleBold}>B</Text>
-            <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" fontStyle="italic" mr={1} onClick={handleItalic}>i</Text>
-            <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" onClick={handleUppercase}>T</Text>
-            <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" size="sm" onClick={handleLowercase}>t</Text>
-            <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" borderBottom="1px solid #000" onClick={handleUnderline}>U</Text>
-            <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" px={1} background="linear-gradient(transparent 50%, yellow 50%)" onClick={handleMarker}>A</Text>
-          </Stack>
+      <AuthGuard>
+        <HeaderTop />
+        <Box pt={10} pb={20}>
+          <Center fontWeight="bold" fontSize="4xl" mb={5}>Create Blog</Center>
+          <Flex justify="center" gap={10} px={{ base: 5, md: 10 }}>
+            <Stack
+              bg='gray.100'
+              rounded="md"
+              py={{ base: 4, md: 8 }}
+              px={5}
+              spacing={6}
+              h="fit-content"
+              w={{ base: "100%", md: "fit-content" }}
+              position={{ base: "fixed", md: "sticky" }}
+              top={{ base: "auto", md: 30 }}
+              bottom={{ base: 0, md: "auto" }}
+              direction={{ base: "row", md: "column" }}
+              justify="center"
+              lineHeight={1}
+            >
+              <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" fontWeight="bold" onClick={handleBold}>B</Text>
+              <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" fontStyle="italic" mr={1} onClick={handleItalic}>i</Text>
+              <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" onClick={handleUppercase}>T</Text>
+              <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" size="sm" onClick={handleLowercase}>t</Text>
+              <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" borderBottom="1px solid #000" onClick={handleUnderline}>U</Text>
+              <Text fontSize="2xl" display="flex" justifyContent="center" cursor="pointer" px={1} background="linear-gradient(transparent 50%, yellow 50%)" onClick={handleMarker}>A</Text>
+            </Stack>
 
-          <Box w={720}>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              <Box mb={4}>
-                <Input
-                  placeholder="タイトルを入力してください"
-                  size="lg"
-                  type="text"
-                  {...register("title", {
-                    required: {
-                      value: true,
-                      message: "タイトルを入力してください",
-                    }
-                  })}
-                />
-                {errors.title && (
-                  <Text mt={1} color="red" fontWeight="bold">{errors.title.message}</Text>
-                )}
-              </Box>
-              <Box>
-                <Dropzone onDrop={onDrop}>
-                  {({ getRootProps, getInputProps }) => (
-                    <Flex {...getRootProps()} bg='gray.200' height={100} cursor="pointer" justify="center">
-                      <input
-                        {...getInputProps()}
-                      />
-                      {selectedImage ? (
-                        <Text my="auto">{selectedImage.name}</Text>
-                      ) : (
-                        <Text my="auto">ここにファイルをドラッグ＆ドロップするか、クリックしてファイルを選択してください。</Text>
-                      )}
-                    </Flex>
+            <Box w={720}>
+              <form onSubmit={handleSubmit(onSubmit)}>
+                <Box mb={4}>
+                  <Input
+                    placeholder="タイトルを入力してください"
+                    size="lg"
+                    type="text"
+                    {...register("title", {
+                      required: {
+                        value: true,
+                        message: "タイトルを入力してください",
+                      }
+                    })}
+                  />
+                  {errors.title && (
+                    <Text mt={1} color="red" fontWeight="bold">{errors.title.message}</Text>
                   )}
-                </Dropzone>
-              </Box>
-              <Box rounded="md" p={3} mt={4} bgColor="teal.100">
-                <Flex justifyContent="space-between">
-                  <Box>
-                    <Text fontSize="xs" fontWeight="bold" mb={1}>新しいカテゴリーを登録</Text>
-                    <Input
-                      bg="white"
-                      placeholder="新しいカテゴリーを追加"
-                      size="sm"
-                      type="text"
-                      {...register("category")}
-                    />
-                  </Box>
-                  {categories.length > 0 && (
-                    <Box w={300}>
-                      <Text fontSize="xs" fontWeight="bold" mb={1}>登録済カテゴリーを選択</Text>
-                      <Select
+                </Box>
+                <Box>
+                  <Dropzone onDrop={onDrop}>
+                    {({ getRootProps, getInputProps }) => (
+                      <Flex {...getRootProps()} bg='gray.200' height={100} cursor="pointer" justify="center">
+                        <input
+                          {...getInputProps()}
+                        />
+                        {selectedImage ? (
+                          <Text my="auto">{selectedImage.name}</Text>
+                        ) : (
+                          <Text my="auto">ここにファイルをドラッグ＆ドロップするか、クリックしてファイルを選択してください。</Text>
+                        )}
+                      </Flex>
+                    )}
+                  </Dropzone>
+                </Box>
+                <Box rounded="md" p={3} mt={4} bgColor="teal.100">
+                  <Flex justifyContent="space-between">
+                    <Box>
+                      <Text fontSize="xs" fontWeight="bold" mb={1}>新しいカテゴリーを登録</Text>
+                      <Input
                         bg="white"
+                        placeholder="新しいカテゴリーを追加"
                         size="sm"
-                        placeholder="カテゴリーを選択してください"
-                        {...register("category_id")}
-                        disabled={!isCategorySelected} // 新しいカテゴリーが入力されたらSelectを無効化
-                      >
-                        {categories.map(category => (
-                          <option key={category.id} value={category.id}>{category.name}</option>
-                        ))}
-                      </Select>
+                        type="text"
+                        {...register("category")}
+                      />
+                    </Box>
+                    {categories.length > 0 && (
+                      <Box w={300}>
+                        <Text fontSize="xs" fontWeight="bold" mb={1}>登録済カテゴリーを選択</Text>
+                        <Select
+                          bg="white"
+                          size="sm"
+                          placeholder="カテゴリーを選択してください"
+                          {...register("category_id")}
+                          disabled={!isCategorySelected} // 新しいカテゴリーが入力されたらSelectを無効化
+                        >
+                          {categories.map(category => (
+                            <option key={category.id} value={category.id}>{category.name}</option>
+                          ))}
+                        </Select>
+                      </Box>
+                    )}
+                  </Flex>
+                </Box>
+                <Box rounded="md" p={5} mt={4} bgColor="yellow.200">
+                  {editorEnable && (
+                    <Box bg='white' p={2} h={200}>
+                      <DraftEditor placeholder="ここに内容を入力してください" editorKey="editor-key" editorState={editorState} customStyleMap={styleMap} onChange={setEditorState} />
                     </Box>
                   )}
-                </Flex>
-              </Box>
-              <Box rounded="md" p={5} mt={4} bgColor="yellow.200">
-                {editorEnable && (
-                  <Box bg='white' p={2} h={200}>
-                    <DraftEditor placeholder="ここに内容を入力してください" editorKey="editor-key" editorState={editorState} customStyleMap={styleMap} onChange={setEditorState} />
-                  </Box>
-                )}
-              </Box>
-              <Box textAlign="right" mt={3}>
-                <Button type="submit" colorScheme="blue" disabled={loading}>
-                  {loading ? "投稿中..." : "投稿する"}
-                </Button>
-              </Box>
-            </form>
-          </Box>
-        </Flex>
-      </Box >
+                </Box>
+                <Box textAlign="right" mt={3}>
+                  <Button type="submit" colorScheme="blue" disabled={loading}>
+                    {loading ? "投稿中..." : "投稿する"}
+                  </Button>
+                </Box>
+              </form>
+            </Box>
+          </Flex>
+        </Box >
+      </AuthGuard>
     </AuthProvider>
-    </>
   )
 }
 
