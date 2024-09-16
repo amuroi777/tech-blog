@@ -23,20 +23,21 @@ export const AuthGuard = ({ children }: Props) => {
       return;
      }
 
-     if(pathname === '/' && user === null) {
+      // ログインしていない状態で特定ページにアクセスした場合
+    if (user === null && (pathname === '/add' || pathname === '/profile')) {
+      if(!toast.isActive('logout-toast') && !sessionStorage.getItem('logout-toast')) {
+        toast({
+          id: 'logout-toast',
+          title:'ログアウトしました',
+          status: 'info',
+          duration: 5000,
+          isClosable: true,
+        });
+        sessionStorage.setItem('logout-toast', 'true');
+      }
+      
+      router.push('/signin');
       return;
-     }
-
-    if (user === null) {
-      toast({
-        title:'ログアウトしました',
-        status: 'info',
-        duration: 5000,
-        isClosable: true,
-      });
-      //ログアウト時にsessionStrageの中身をクリアにする
-      sessionStorage.removeItem('login-toast');
-      router.push('/signin')
     }
 
     if (user && !sessionStorage.getItem('login-toast')){
@@ -49,6 +50,7 @@ export const AuthGuard = ({ children }: Props) => {
           isClosable: true,
         });
         sessionStorage.setItem('login-toast', 'true')
+        sessionStorage.removeItem('logout-toast')
       }
     }
   }, [user, router, toast, pathname])
