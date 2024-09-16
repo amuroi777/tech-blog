@@ -299,13 +299,23 @@ const AddPage = () => {
                           bg="white"
                           size="sm"
                           placeholder="カテゴリーを選択してください"
-                          {...register("category_id")}
+                          {...register("category_id", {
+                              required: {
+                                value: true,
+                                message: "カテゴリーを選択してください",
+                              }
+                          })}
                           disabled={!isCategorySelected} // 新しいカテゴリーが入力されたらSelectを無効化
                         >
+                          
                           {categories.map(category => (
                             <option key={category.id} value={category.id}>{category.name}</option>
                           ))}
                         </Select>
+
+                        {errors.category_id && (
+                          <Text mt={1} color="red" fontWeight="bold">{errors.category_id.message}</Text>
+                        )}
                       </Box>
                     )}
                   </Flex>
