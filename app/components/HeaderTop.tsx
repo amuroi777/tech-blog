@@ -56,9 +56,13 @@ const HeaderTop = () => {
     <AuthGuard>
       <Box bg="gray.300" px={4}>
         <Flex h={20} alignItems="center" pl="20px" justifyContent="space-between">
-          <Box fontSize="4xl" fontWeight="bold" color="blackAlpha.400" onClick={() => router.push('/')} cursor="pointer">
-            Logo
-          </Box>
+        <Image
+          src="/logo.jpg"
+          alt="Logo"
+          boxSize="50px"
+          cursor="pointer"
+          onClick={() => router.push('/')}
+        />
           <HStack spacing={8} alignItems="center">
             <HStack as="nav" spacing={8} display={{ base: "none", md: "flex" }}>
             <Button
