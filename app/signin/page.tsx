@@ -21,7 +21,7 @@ const SignIn = () => {
 		
 		try {
 			await signInWithEmailAndPassword(auth, email, password);
-      router.push('/')
+      router.push('/profile')
 		} catch (error) {
 			setError("ログインに失敗しました");
 			console.log(error)
