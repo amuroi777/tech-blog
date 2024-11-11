@@ -68,5 +68,5 @@ export const usePosts = () => {
     fetchPostsWithDetails();
   }, []);
 
-  return { posts, loading, error };
+  return { posts, loading, error, setPosts };
 };

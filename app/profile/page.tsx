@@ -1,20 +1,22 @@
 'use client'
 
-import { Box, Card, CardBody, Center, Heading, Image, SimpleGrid, Stack, Text } from "@chakra-ui/react";
+import { Box, Card, CardBody, Center, Heading, Image, SimpleGrid, Stack, Text, Button, useToast } from "@chakra-ui/react";
 import React, { useState } from 'react';
 import { AuthProvider } from "../context/AuthContext";
 import { AuthGuard } from "../authguard/AuthGuard";
 import HeaderTop from "../components/HeaderTop";
 import { usePosts } from "../hooks/UsePosts";
 import { convertDraftContentToHTML } from "../utils/convertDraftContentToHTML";
-import { auth } from "@/firebase";
+import { auth, } from "@/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Link from "next/link";
+import { deleteDoc, doc, getFirestore} from "firebase/firestore";
 
 
 export default function Profile() {
-  const { posts, loading, error } = usePosts();
+  const { posts, loading, error, setPosts } = usePosts();
   const [user, loadingAuth] = useAuthState(auth);
+  const toast = useToast();
 
   // ページネーションのための状態
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,11 +27,39 @@ export default function Profile() {
   // 投稿が存在しない場合、空の配列を使用
   const DisplayedPersonalPosts = posts.filter(post => post.user_id === user?.uid).slice(startIndex, endIndex);
 
+  //投稿の削除
+  const handleDeletePost = async (postId: string) => {
+    const confirmDelete = window.confirm("削除してもよろしいでしょうか?");
+    if (!confirmDelete) return;
+
+    try {
+      await deleteDoc(doc(getFirestore(), "posts", postId));
+      setPosts(prevPosts => prevPosts.filter(post => post.id !== postId));
+
+      toast({
+        title: "削除完了",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      });
+    } catch (error) {
+      console.error("Error deleting post:", error);
+
+      toast({
+        title: "エラー",
+        description: "削除できませんでした。",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "top",
+      })
+    }
+  }
+
 
   // 画像エラーの場合
   const [imageError, setImageError] = useState<string>("");
-
-
 
   if (loading) {
     return <Center><Box mt='20' color="gray.500">Loading...</Box></Center>;
@@ -64,8 +94,6 @@ export default function Profile() {
                         maxHeight="62%"
                         onError={() => setImageError(post.id)}
                         display={imageError === post.id ? "none" : "block"}
-
-
                       />
                       {imageError === post.id && (
                         <Box
@@ -110,6 +138,17 @@ export default function Profile() {
                       </Box>
                     </CardBody>
                   </Link>
+                  <Button
+                    colorScheme="red"
+                    fontWeight="bold"
+                    mb={6}
+                    rounded="60px"
+                    padding="18px"
+                    mt="20px"
+                    width={{ base: "60%", sm: "60%", md: "60%", lg: "30%" }}
+                    onClick={() => handleDeletePost(post.id)}>
+                    削除
+                  </Button>
                 </Card>
               ))}
             </SimpleGrid>
