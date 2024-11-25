@@ -1,18 +1,42 @@
-import { Box, Flex, HStack, IconButton, useDisclosure, Stack, Link, Button, Drawer, DrawerBody, DrawerHeader, DrawerOverlay, DrawerContent, DrawerCloseButton, Image, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  HStack,
+  IconButton,
+  useDisclosure,
+  Stack,
+  Link,
+  Button,
+  Drawer, DrawerBody,
+  DrawerHeader,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  Image,
+  Text,
+  useToast
+} from "@chakra-ui/react";
 import { HamburgerIcon, EditIcon } from "@chakra-ui/icons";
+import { storage } from "@/firebase";
 import {getAuth, signOut} from "firebase/auth";
 import { AuthProvider, useAuthContext } from "../context/AuthContext";
 import { useRouter, usePathname } from 'next/navigation'
 import { useEffect, useState } from 'react';
+import { getDownloadURL, uploadBytesResumable, ref } from "firebase/storage";
+import { CustomModal } from "./ProfileModal";
 
 const HeaderTop = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const menuDisclosure = useDisclosure();
+  const profileImageDisclosure = useDisclosure();
   const authContext = useAuthContext();
   const router = useRouter();
   const [logoutSuccess, setLogoutSuccess] = useState(false);
   const [loggedIn, setLoggedIn] = useState(false); 
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isAddPage, setIsAddPage] = useState(false);
+  const [uploadImageUrl, setUploadImageUrl] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const toast = useToast();
 
     const handlePublish = () => {
     router.push('/add?publish=true'); // クエリパラメータで 'publish' を設定
@@ -35,8 +59,8 @@ const HeaderTop = () => {
 
   // ページ遷移時に/addページかどうか監視
   useEffect(() => {
-    setIsAddPage(window.location.pathname === '/add');
-  }, [router])
+    setIsAddPage(pathname === '/add');
+  }, [pathname])
 
   const logout = () =>{
     const auth = getAuth();
@@ -50,9 +74,67 @@ const HeaderTop = () => {
       console.log(error)
     })
   }
+  
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectFile = event.target.files?.[0] || null;
+      setFile(selectFile);
+    
+  };
+
+  useEffect(() => {
+    const storageImageUrl = localStorage.getItem('userIconUrl');
+    if (storageImageUrl) {
+      setUploadImageUrl(storageImageUrl);
+    }
+  }, []);
+
+  const handleFileUpload = (url: string) => {
+    setUploadImageUrl(url);
+    localStorage.setItem('userIconUrl', url);
+  }
+
+  const handleUpload = () => {
+    if(!file) {
+      toast({
+        title: "Error",
+        description: "Please select a file",
+        status: "error",
+      });
+    return;
+    }
+    
+    const storageRef = ref(storage, `uploads/${file.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file); 
+
+    uploadTask.on(
+      "state_changed",
+      null,
+      (error) => {
+        toast({
+          title: "Error",
+          description: error.message,
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setUploadImageUrl(downloadURL);
+          localStorage.setItem('userIconUrl', downloadURL); // urlを保存
+          toast({
+            title: "アップロード成功",
+            description: "画像が正常にアップロードされました",
+            status: "success",
+            duration: 5000,
+            isClosable: true,
+          });
+        });
+      }
+    );
+  };
 
   return (
-    <AuthProvider>
       <Box bg="gray.300" px={4}>
         <Flex h={20} alignItems="center" pl="20px" justifyContent="space-between">
           <Box fontSize="4xl" fontWeight="bold" color="blackAlpha.400" onClick={() => router.push('/')} cursor="pointer">
@@ -103,8 +185,18 @@ const HeaderTop = () => {
                 <>
                 <IconButton
                   aria-label="User Icon"
-                  icon={<Image src="/user-icon.png" alt="user-icon" width="40px" height="40px" objectFit="contain" />}
-                  onClick={() => setShowUserMenu(!showUserMenu)} // クリックでメニューをトグル
+                  mr={5}
+                  icon={
+                    <Image
+                      src={uploadImageUrl || "/user-icon.png"}
+                      alt="user-icon"
+                      width="120px"
+                      height="60px"
+                      objectFit="cover"
+                      borderRadius="full"
+                    />
+                  }
+                  onClick={() => setShowUserMenu(!showUserMenu)}
                   bg="none"
                   border="none"
                   _hover={{ bg: "none" }}
@@ -125,6 +217,22 @@ const HeaderTop = () => {
                       >
                       Profile
                     </Button>
+
+                    <Button
+                      bg="blue.400"
+                      size= "sm"
+                      rounded="60px"
+                      padding="15px"
+                      mb={4}
+                      onClick={profileImageDisclosure.onOpen}
+                      >
+                      Profile画像を編集
+                      </Button>
+                      <CustomModal
+                        isOpen={profileImageDisclosure.isOpen}
+                        onClose={profileImageDisclosure.onClose}
+                        onUpload={handleFileUpload}
+                      />
 
                     <Button
                       bg="red.400"
@@ -183,11 +291,18 @@ const HeaderTop = () => {
               {isAddPage ? "Publish" : "Create"}
             </Link>
           </Button>
-            <IconButton size="lg" bg="none" color="#000" icon={<HamburgerIcon boxSize={8} />} aria-label="Open Menu" display={{ md: "none" }} onClick={onOpen} />
+            <IconButton
+              size="lg"
+              bg="none"
+              color="#000"
+              icon={<HamburgerIcon boxSize={8} />}
+              aria-label="Open Menu" display={{ md: "none" }}
+              onClick={menuDisclosure.onOpen}
+            />
           </HStack>
         </Flex>
 
-        <Drawer placement="right" onClose={onClose} isOpen={isOpen}>
+        <Drawer placement="right" onClose={menuDisclosure.onClose} isOpen={menuDisclosure.isOpen}>
           <DrawerOverlay>
             <DrawerContent>
               <DrawerCloseButton />
@@ -195,8 +310,22 @@ const HeaderTop = () => {
                 <Stack as="nav" spacing={4} alignItems="center">
                 {loggedIn ? (
                   <>
+                  <IconButton
+                  aria-label="User Icon"
+                  mt="45px"
+                  icon={
+                    <Image
+                      src={uploadImageUrl || "/user-icon.png"}
+                      alt="user-icon"
+                      width="90px"
+                      height="90px"
+                      objectFit="cover"
+                      borderRadius="full"
+                    />
+                   }
+                  />
                   <Button
-                    mt="75px"
+                    mt="35px"
                     pl="25px"
                     rounded="60px"
                     padding="5px"
@@ -210,6 +339,26 @@ const HeaderTop = () => {
                   >
                     <Text color="#000">Profile</Text>
                   </Button>
+                  <Button
+                    mt="15px"
+                    pl="25px"
+                    rounded="60px"
+                    padding="5px"
+                    border="1px solid"
+                    borderColor="#000"
+                    bg="none"
+                    width="50%"
+                    fontSize="sm"
+                    display={{ base: "block", md: "none" }}
+                    onClick={profileImageDisclosure.onOpen}
+                    >
+                    <Text color="#000">Profile画像編集</Text>
+                  </Button>
+                  <CustomModal
+                        isOpen={profileImageDisclosure.isOpen}
+                        onClose={profileImageDisclosure.onClose}
+                        onUpload={handleFileUpload}
+                      />
                     <Button
                       mt="15px"
                       pl="25px"
@@ -267,7 +416,6 @@ const HeaderTop = () => {
           </DrawerOverlay>
         </Drawer>
       </Box>
-    </AuthProvider>
   );
 };
 
