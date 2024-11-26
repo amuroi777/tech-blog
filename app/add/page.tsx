@@ -1,8 +1,8 @@
 'use client'
-import { useEffect, useState } from "react";
-import { addDoc, collection, getDocs, setDoc, doc } from "firebase/firestore";
+import { Suspense ,useEffect, useState } from "react";
+import { collection, getDocs, setDoc, doc } from "firebase/firestore";
 import { db, storage } from "@/firebase";
-import { Box, Button, Center, Flex, Input, Select, Stack, Text, Textarea } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Input, Select, Stack, Text, Spinner } from "@chakra-ui/react";
 import Dropzone from "react-dropzone";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
@@ -37,6 +37,13 @@ const AddPage = () => {
   const auth = getAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const publish = searchParams.get("publish");
+    if (publish === "true") {
+      handleSubmit(onSubmit)();
+    }
+  }, [searchParams])
 
 
   useEffect(() => {
@@ -247,6 +254,7 @@ const AddPage = () => {
             </Stack>
 
             <Box w={720}>
+            <Suspense fallback={<Spinner />}>
               <form onSubmit={handleSubmit(onSubmit)}>
                 <Box mb={4}>
                   <Input
@@ -333,6 +341,7 @@ const AddPage = () => {
                   </Button>
                 </Box>
               </form>
+              </Suspense>
             </Box>
           </Flex>
         </Box >
