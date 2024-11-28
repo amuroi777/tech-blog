@@ -1,11 +1,11 @@
 import { useSearchParams } from "next/navigation";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, Suspense } from "react";
 
 interface PublishHandlerProps {
   onSubmit: () => void;
 }
 
-const PublishHandler: React.FC<PublishHandlerProps> = ({ onSubmit }) => {
+const PublishHandlerContent: React.FC<PublishHandlerProps> = ({ onSubmit }) => {
   const searchParams = useSearchParams();
   const hasExecuted = useRef(false)
 
@@ -21,5 +21,13 @@ const PublishHandler: React.FC<PublishHandlerProps> = ({ onSubmit }) => {
 
   return null
 };
+
+const PublishHandler: React.FC<PublishHandlerProps> = ({ onSubmit }) => {
+  return (
+    <Suspense fallback={null}>
+      <PublishHandlerContent onSubmit={onSubmit} />
+    </Suspense>
+  )
+}
 
 export default PublishHandler;
