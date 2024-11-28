@@ -237,6 +237,7 @@ const AddPage = () => {
             </Stack>
 
             <Box w={720}>
+              <Suspense fallback={<p>Loading...</p>}>
                 <Box mb={4}>
                   <Input
                     placeholder="タイトルを入力してください"
@@ -326,7 +327,6 @@ const AddPage = () => {
                     {loading ? "投稿中..." : "投稿する"}
                   </Button>
                 </Box>
-                <Suspense fallback={<p>Loading...</p>}>
                   <PublishHandler onSubmit={() => handleSubmit(onSubmit)()} />
                 </Suspense>
             </Box>
