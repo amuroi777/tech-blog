@@ -10,10 +10,12 @@ import { v4 as uuidv4 } from 'uuid';
 import { Editor as DraftEditor, EditorState, RichUtils, Modifier, convertToRaw } from "draft-js";
 import 'draft-js/dist/Draft.css';
 import { getAuth } from "firebase/auth";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import HeaderTop from "../components/HeaderTop";
 import { AuthProvider } from "../context/AuthContext";
 import { AuthGuard } from "../authguard/AuthGuard";
+import PublishHandler from "../components/PublishHandler"; // 適切なパスに修正
+
 
 type FormTypes = {
   id: string;
@@ -36,15 +38,6 @@ const AddPage = () => {
   const [isCategorySelected, setIsCategorySelected] = useState(true);
   const auth = getAuth();
   const router = useRouter();
-  const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const publish = searchParams.get("publish");
-    if (publish === "true") {
-      handleSubmit(onSubmit)();
-    }
-  }, [searchParams])
-
 
   useEffect(() => {
     setEditorEnable(true);
@@ -153,16 +146,6 @@ const AddPage = () => {
     }
   }
 
-  //headerの「publish」クリック時の処理
-  useEffect(() => {
-    // クエリパラメータの処理
-    const publish = searchParams.get('publish');
-    if (publish === 'true') {
-      // フォームを自動的に送信
-      handleSubmit(onSubmit)();
-    }
-  }, [searchParams]);
-
   // エディター 太字
   const handleBold = () => {
     setEditorState(RichUtils.toggleInlineStyle(editorState, "BOLD"));
@@ -254,8 +237,6 @@ const AddPage = () => {
             </Stack>
 
             <Box w={720}>
-            <Suspense fallback={<Spinner />}>
-              <form onSubmit={handleSubmit(onSubmit)}>
                 <Box mb={4}>
                   <Input
                     placeholder="タイトルを入力してください"
@@ -336,12 +317,16 @@ const AddPage = () => {
                   )}
                 </Box>
                 <Box textAlign="right" mt={3}>
-                  <Button type="submit" colorScheme="blue" disabled={loading}>
+                  <Button
+                    type="button"
+                    colorScheme="blue"
+                    disabled={loading}
+                    onClick={handleSubmit(onSubmit)}
+                  >
                     {loading ? "投稿中..." : "投稿する"}
                   </Button>
                 </Box>
-              </form>
-              </Suspense>
+                <PublishHandler onSubmit={() => handleSubmit(onSubmit)()} />
             </Box>
           </Flex>
         </Box >
