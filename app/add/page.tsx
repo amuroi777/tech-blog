@@ -326,7 +326,9 @@ const AddPage = () => {
                     {loading ? "投稿中..." : "投稿する"}
                   </Button>
                 </Box>
-                <PublishHandler onSubmit={() => handleSubmit(onSubmit)()} />
+                <Suspense fallback={<p>Loading...</p>}>
+                  <PublishHandler onSubmit={() => handleSubmit(onSubmit)()} />
+                </Suspense>
             </Box>
           </Flex>
         </Box >
