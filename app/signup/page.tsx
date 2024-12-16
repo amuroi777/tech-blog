@@ -1,15 +1,15 @@
-"use client"
+"use client";
 
 import { Box, Text, Flex, Heading, Button, Input, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Icon, Alert, AlertIcon } from "@chakra-ui/react";
+import Link from "next/link";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { useState } from 'react';
-import { auth, db } from '../../firebase';
-import { setDoc, doc } from 'firebase/firestore';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { useState } from "react";
+import { auth, db } from "../../firebase";
+import { setDoc, doc } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
 import { updateProfile } from "firebase/auth";
-import {useRouter} from 'next/navigation'
-import { serverTimestamp } from 'firebase/firestore';
-
+import { useRouter } from "next/navigation";
+import { serverTimestamp } from "firebase/firestore";
 
 const SignUp = () => {
   const [email, setEmail] = useState("");
@@ -22,10 +22,10 @@ const SignUp = () => {
   const validatePassword = (password: string): boolean => {
     const hasMinLength = password.length >= 5;
     const hasNumber = /\d/.test(password);
-    const hasSpecialChar =/[!@#$%^&*(),.?":{}|<>]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
     return hasMinLength && hasNumber && hasSpecialChar;
-  }
-  
+  };
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
@@ -46,17 +46,13 @@ const SignUp = () => {
       return;
     }
 
-    try{
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        emailValue,
-        passwordValue
-      );
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, emailValue, passwordValue);
 
       //登録後にユーザープロファイルを更新
-      await updateProfile(userCredential.user,{
+      await updateProfile(userCredential.user, {
         displayName: nameValue,
-      })
+      });
 
       // Firestore にユーザードキュメントを作成
       await setDoc(doc(db, "users", userCredential.user.uid), {
@@ -69,7 +65,7 @@ const SignUp = () => {
       console.log("会員登録が成功しました:", userCredential.user);
       setIsSignUpMessage(true);
       setError(null);
-      router.push('./signin');//登録が成功するとログインページへ遷移
+      router.push("./signin"); //登録が成功するとログインページへ遷移
     } catch (error) {
       console.log("会員登録に失敗しました:", error);
       setError("会員登録に失敗しました");
@@ -79,11 +75,11 @@ const SignUp = () => {
 
   const handleChangeEmail = (event: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(event.currentTarget.value);
-  }
+  };
 
   const handleChangePassword = (event: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(event.currentTarget.value);
-  }
+  };
 
   return (
     <Flex height="100vh" alignItems="center" justifyContent="center">
@@ -92,12 +88,12 @@ const SignUp = () => {
           <Box display={{ base: "block", md: "none" }} mb={50} fontWeight="bold">
             <Breadcrumb>
               <BreadcrumbItem>
-                <BreadcrumbLink href="#">
+                <Link href="/">
                   <Flex align="center">
                     <Icon as={ChevronLeftIcon} boxSize={6} />
                     Home
                   </Flex>
-                </BreadcrumbLink>
+                </Link>
               </BreadcrumbItem>
             </Breadcrumb>
           </Box>
@@ -111,7 +107,7 @@ const SignUp = () => {
           <Alert status="success" mb={4}>
             <AlertIcon />
             会員登録が成功しました
-            </Alert>
+          </Alert>
         )}
 
         {error && (
@@ -119,69 +115,29 @@ const SignUp = () => {
             <AlertIcon />
             {error}
           </Alert>
-             )}
+        )}
 
         <Text mb={3} fontSize={["sm", "md", "lg", "xl"]}>
           Name
         </Text>
         <form onSubmit={handleSubmit}>
-        <Input 
-          name="name"
-          type="name"
-          placeholder="Enter your name"
-          variant="filled"
-          mb={5} rounded={13}
-          borderColor="black.100"
-          background="gray.200"
-          width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }} 
-          />
+          <Input name="name" type="name" placeholder="Enter your name" variant="filled" mb={5} rounded={13} borderColor="black.100" background="gray.200" width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }} />
 
-        <Text mb={3} fontSize={["sm", "md", "lg", "xl"]}>
-          Email
-        </Text>
-        <Input
-          name="email" 
-          type="email"
-          placeholder="Enter your email" 
-          onChange={handleChangeEmail}
-          variant="filled"
-          mb={5}
-          rounded={13}
-          borderColor="black.100"
-          background="gray.200"
-          width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }}
-          />
-          
-        <Text mb={3} fontSize={["sm", "md", "lg", "xl"]}>
-          Password
-        </Text>
-        <Input
-          name="password"
-          type="password"
-          placeholder="Enter your password"
-          onChange={handleChangePassword}
-          variant="filled"
-          mb={0}
-          rounded={13}
-          borderColor="black.100"
-          background="gray.200" 
-          width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }}
-          />
+          <Text mb={3} fontSize={["sm", "md", "lg", "xl"]}>
+            Email
+          </Text>
+          <Input name="email" type="email" placeholder="Enter your email" onChange={handleChangeEmail} variant="filled" mb={5} rounded={13} borderColor="black.100" background="gray.200" width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }} />
 
-        <Flex justifyContent="center">
-          <Button
-            type="submit"
-            mb={6}
-            rounded="60px"
-            padding="35px"
-            mt="50px"
-            bg={{ base: "blue.400", md: "blue.300" }}
-            width={{ base: "60%", sm: "60%", md: "60%", lg: "40%" }}
-            fontSize={{ base: "xl", md: "2xl", lg: "2xl" }}
-            color={{ base: "black", sm: "white" }}>
-            Sign Up
-          </Button>
-        </Flex>
+          <Text mb={3} fontSize={["sm", "md", "lg", "xl"]}>
+            Password
+          </Text>
+          <Input name="password" type="password" placeholder="Enter your password" onChange={handleChangePassword} variant="filled" mb={0} rounded={13} borderColor="black.100" background="gray.200" width={{ base: "100%", sm: "100%", md: "100%", lg: "100%" }} />
+
+          <Flex justifyContent="center">
+            <Button type="submit" mb={6} rounded="60px" padding="35px" mt="50px" bg={{ base: "blue.400", md: "blue.300" }} width={{ base: "60%", sm: "60%", md: "60%", lg: "40%" }} fontSize={{ base: "xl", md: "2xl", lg: "2xl" }} color={{ base: "black", sm: "white" }}>
+              Sign Up
+            </Button>
+          </Flex>
         </form>
       </Flex>
     </Flex>
@@ -189,4 +145,3 @@ const SignUp = () => {
 };
 
 export default SignUp;
-
